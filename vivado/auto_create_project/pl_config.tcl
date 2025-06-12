@@ -1,18 +1,11 @@
   # Create interface ports
   set btns [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:gpio_rtl:1.0 btns ]
-
   set cam0_i2c [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 cam0_i2c ]
-
   set cam1_i2c [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 cam1_i2c ]
-
   # set fan [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:gpio_rtl:1.0 fan ]
-
   set leds [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:gpio_rtl:1.0 leds ]
-
   set mipi_phy_if_0 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:mipi_phy_rtl:1.0 mipi_phy_if_0 ]
-
   set mipi_phy_if_1 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:mipi_phy_rtl:1.0 mipi_phy_if_1 ]
-
 
   # Create ports
   set cam0_gpio [ create_bd_port -dir O -from 0 -to 0 cam0_gpio ]
@@ -155,7 +148,13 @@
  ] $frmbuf_wr_rst_gpio_1
 
   # Create instance: mipi_csi2_rx_subsyst_0, and set properties
-  set mipi_csi2_rx_subsyst_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:mipi_csi2_rx_subsystem:5.1 mipi_csi2_rx_subsyst_0 ]
+  if {[string equal [version -short] "2024.2"]} {
+    set mipi_csi2_rx_subsyst_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:mipi_csi2_rx_subsystem:6.0 mipi_csi2_rx_subsyst_0 ]
+  } elseif {[string equal [version -short] "2022.1"]} {
+    set mipi_csi2_rx_subsyst_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:mipi_csi2_rx_subsystem:5.1 mipi_csi2_rx_subsyst_0 ]
+  } else {
+    error "Unsupported Vivado version. You have to add the correct version of the IP"
+  }
   set_property -dict [ list \
    CONFIG.CLK_LANE_IO_LOC {AC9} \
    CONFIG.CMN_NUM_LANES {2} \
@@ -173,7 +172,13 @@
  ] $mipi_csi2_rx_subsyst_0
 
   # Create instance: mipi_csi2_rx_subsyst_1, and set properties
-  set mipi_csi2_rx_subsyst_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:mipi_csi2_rx_subsystem:5.1 mipi_csi2_rx_subsyst_1 ]
+  if {[string equal [version -short] "2024.2"]} {
+    set mipi_csi2_rx_subsyst_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:mipi_csi2_rx_subsystem:6.0 mipi_csi2_rx_subsyst_1 ]
+  } elseif {[string equal [version -short] "2022.1"]} {
+    set mipi_csi2_rx_subsyst_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:mipi_csi2_rx_subsystem:5.1 mipi_csi2_rx_subsyst_1 ]
+  } else {
+    error "Unsupported Vivado version. You have to add the correct version of the IP"
+  }
   set_property -dict [ list \
    CONFIG.CLK_LANE_IO_LOC {W8} \
    CONFIG.CMN_NUM_LANES {2} \
@@ -206,7 +211,13 @@
  ] $util_ds_buf_0
 
   # Create instance: v_frmbuf_wr_0, and set properties
-  set v_frmbuf_wr_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.4 v_frmbuf_wr_0 ]
+  if {[string equal [version -short] "2024.2"]} {
+    set v_frmbuf_wr_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:3.0 v_frmbuf_wr_0 ]
+  } elseif {[string equal [version -short] "2022.1"]} {
+    set v_frmbuf_wr_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.4 v_frmbuf_wr_0 ]
+  } else {
+    error "Unsupported Vivado version. You have to add the correct version of the IP"
+  }
   set_property -dict [ list \
    CONFIG.HAS_UYVY8 {1} \
    CONFIG.HAS_YUYV8 {1} \
@@ -217,7 +228,13 @@
  ] $v_frmbuf_wr_0
 
   # Create instance: v_frmbuf_wr_1, and set properties
-  set v_frmbuf_wr_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.4 v_frmbuf_wr_1 ]
+  if {[string equal [version -short] "2024.2"]} {
+    set v_frmbuf_wr_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:3.0 v_frmbuf_wr_1 ]
+  } elseif {[string equal [version -short] "2022.1"]} {
+    set v_frmbuf_wr_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.4 v_frmbuf_wr_1 ]
+  } else {
+    error "Unsupported Vivado version. You have to add the correct version of the IP"
+  }
   set_property -dict [ list \
    CONFIG.HAS_UYVY8 {1} \
    CONFIG.HAS_YUYV8 {1} \

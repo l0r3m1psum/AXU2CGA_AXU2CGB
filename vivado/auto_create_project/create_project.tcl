@@ -3,8 +3,8 @@ set tclpath [pwd]
 cd $tclpath
 #source $tclpath/project_info.tcl
 set src_dir $tclpath/src
-set projName "axu2cga_trd"
-#set projName "axu2cgb_trd"
+#set projName "axu2cga_trd"
+set projName "axu2cgb_trd"
 
 #create project path
 cd ..
@@ -48,7 +48,13 @@ create_bd_design $bdname
 
 open_bd_design $projpath/$projName.srcs/sources_1/bd/$bdname/$bdname.bd
 
-create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.4 zynq_ultra_ps_e_0
+if {[string equal [version -short] "2024.2"]} {
+  create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.5 zynq_ultra_ps_e_0
+} elseif {[string equal [version -short] "2022.1"]} {
+  create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.4 zynq_ultra_ps_e_0
+} else {
+  error "Unsupported Vivado version. You have to add the correct version of the IP"
+}
 
 source $projpath/auto_create_project/ps_config.tcl
 set_ps_config zynq_ultra_ps_e_0
@@ -61,9 +67,11 @@ set_property -dict [list CONFIG.PSU__GPIO_EMIO__PERIPHERAL__ENABLE {1}] [get_bd_
 if {[string equal $projName "axu2cga_trd"]} {
   puts "axu2cga_trd"
   set_property -dict [list CONFIG.PSU__DDRC__BUS_WIDTH {32 Bit}] [get_bd_cells zynq_ultra_ps_e_0]
-} else {
+} elseif {[string equal $projName "axu2cgb_trd"]} {
   puts "axu2cgb_trd"
   set_property -dict [list CONFIG.PSU__SD0__PERIPHERAL__ENABLE {1}  CONFIG.PSU__SD0__SLOT_TYPE {eMMC}  CONFIG.PSU__SD0__RESET__ENABLE {1}] [get_bd_cells zynq_ultra_ps_e_0]  
+} else {
+  error "Unknown board"
 }
 
 source $tclpath/pl_config.tcl
@@ -71,7 +79,7 @@ source $tclpath/pl_config.tcl
 regenerate_bd_layout
 
 validate_bd_design
-save_bd_design		 
+save_bd_design
 
 
 make_wrapper -files [get_files $projpath/$projName.srcs/sources_1/bd/$bdname/$bdname.bd] -top
